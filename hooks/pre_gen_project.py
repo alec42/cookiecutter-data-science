@@ -17,5 +17,3 @@ if re.match(r"y(es)?|o(ui)?", "{{ cookiecutter.first_time_git }}" , re.I):
     run(["git", "config", "--global", "user.email", git_email])
     git_password = input("Git password (https authentification):")
     run(["git", "config", "--global", "user.password", git_password])
-
-run(['gh', 'auth', ])
