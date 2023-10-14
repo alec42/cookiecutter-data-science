@@ -4,30 +4,17 @@
     "author_name": "Alec J. van Rassel",
     "description": "Testing & learning ",
     "python_version_number": "3.10",
-    "environment_manager" : [
-        "conda",
-        "pipenv",
-        "virtualenv",
-        "none"
-    ],
-    "dependency_file": [
-        "environment.yml",
-        "requirements.txt",
-        "Pipfile"
-    ],
     "init_git": "yes",
+    "private_git_repo": "yes",
     "first_time_git": "no",
-    "pydata_packages": [
-        "none",
-        "basic"
-    ],
     "open_source_license": ["No license file", "MIT", "BSD-3-Clause"],
     "__prompts__": {
         "project_name": "Enter the name for your project (will be used locally).",
-        "_repo_name": "Enter the name for your repository (will be used for Git).",
+        "__repo_name": "Enter the name for your repository (will be used for Git).",
         "author_name": "Your name (or your organization/company/team).",
         "description": "A short description of the project.",
         "python_version_number": "Python version for environment creation.",
-        "init_git": "Initialize a Git repo, and push to GitHub."
+        "init_git": "Initialize a Git repo, and push to GitHub.",
+        "private_git_repo": "Whether to make the repo private"
     }
 }

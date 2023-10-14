@@ -1,0 +1,21 @@
+name: {{ cookiecutter.project_name}}
+channels:
+  - defaults
+dependencies:
+  - python={{ cookiecutter.python_version_number }}
+  - pip
+  - numpy
+  - pandas
+  - matplotlib
+  - pip:
+    - -e .
+    - scikit-learn
+    - notebook
+    - flake8
+    - ipython
+    - ipykernel
+    - jupyter
+    - pre-commit
+    - nbstripout
+    - setuptools
+    - wheel
