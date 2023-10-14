@@ -1,3 +1,20 @@
 {
-    "DEPRECATED": "Use of the `cookiecutter` command is deprecated. Please use `ccds` in place of `cookiecutter`. To continue using the deprecated template, use `cookiecutter ... -c v1`."
+    "project_name": "project_name",
+    "__repo_name": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
+    "author_name": "Alec J. van Rassel",
+    "description": "Testing & learning ",
+    "python_version_number": "3.10",
+    "init_git": "yes",
+    "private_git_repo": "yes",
+    "first_time_git": "no",
+    "open_source_license": ["No license file", "MIT", "BSD-3-Clause"],
+    "__prompts__": {
+        "project_name": "Enter the name for your project (will be used locally).",
+        "__repo_name": "Enter the name for your repository (will be used for Git).",
+        "author_name": "Your name (or your organization/company/team).",
+        "description": "A short description of the project.",
+        "python_version_number": "Python version for environment creation.",
+        "init_git": "Initialize a Git repo, and push to GitHub.",
+        "private_git_repo": "Whether to make the repo private"
+    }
 }

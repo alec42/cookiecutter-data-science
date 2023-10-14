@@ -3,7 +3,7 @@
 #################################################################################
 
 PROJECT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-PROJECT_NAME = {{ cookiecutter.repo_name }}
+PROJECT_NAME = {{ cookiecutter.__repo_name }}
 PYTHON_VERSION = {{ cookiecutter.python_version_number }}
 PYTHON_INTERPRETER = python
 
@@ -11,19 +11,12 @@ PYTHON_INTERPRETER = python
 # COMMANDS                                                                      #
 #################################################################################
 
-{% if cookiecutter.dependency_file != 'none' %}
 ## Install Python Dependencies
 .PHONY: requirements
 requirements:
-	{% if "requirements.txt" == cookiecutter.dependency_file -%}
-	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
-	{% elif "environment.yml" == cookiecutter.dependency_file -%}
 	conda env update --name $(PROJECT_NAME) --file environment.yml --prune
-	{% elif "Pipfile" == cookiecutter.dependency_file -%}
-	pipenv install
-	{% endif %}
-{% endif %}
+# $(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
+# $(PYTHON_INTERPRETER) -m pip install -r requirements.txt
 
 
 ## Delete all compiled Python files
@@ -35,63 +28,27 @@ clean:
 ## Lint using flake8 and black (use `make format` to do formatting)
 .PHONY: lint
 lint:
-	flake8 {{ cookiecutter.module_name }}
-	black --check --config pyproject.toml {{ cookiecutter.module_name }}
+	flake8 src
 
 
-## Format source code with black
-.PHONY: format
-format:
-	black --config pyproject.toml {{ cookiecutter.module_name }}
-
-{% if not cookiecutter.dataset_storage.none %}
-## Download Data from storage system
-.PHONY: sync_data_down
-sync_data_down:
-	{% if cookiecutter.dataset_storage.s3 -%}
-	aws s3 sync s3://{{ cookiecutter.dataset_storage.s3.bucket }}/data/\
-		data/ {% if cookiecutter.dataset_storage.s3.aws_profile != 'default' %} --profile {{ cookiecutter.dataset_storage.s3.aws_profile }}{% endif %}
-	{% elif cookiecutter.dataset_storage.azure -%}
-	az storage blob download-batch -s {{ cookiecutter.dataset_storage.azure.container }}/data/ \
-		-d data/
-	{% elif cookiecutter.dataset_storage.gcs -%}
-	gsutil -m rsync -r gs://{{ cookiecutter.dataset_storage.gcs.bucket }}/data/ data/
-	{% endif %}
-
-## Upload Data to storage system
-.PHONY: sync_data_up
-sync_data_up:
-	{% if cookiecutter.dataset_storage.s3 -%}
-	aws s3 sync s3://{{ cookiecutter.dataset_storage.s3.bucket }}/data/ data/\
-		{% if cookiecutter.dataset_storage.s3.aws_profile %} --profile $(PROFILE){% endif %}
-	{% elif cookiecutter.dataset_storage.azure -%}
-	az storage blob upload-batch -d {{ cookiecutter.dataset_storage.azure.container }}/data/ \
-		-s data/
-	{% elif cookiecutter.dataset_storage.gcs -%}
-	gsutil -m rsync -r data/ gs://{{ cookiecutter.dataset_storage.gcs.bucket }}/data/
-	{% endif %}
-{% endif %}
-
-{% if cookiecutter.environment_manager != 'none' %}
 ## Set up python interpreter environment
 .PHONY: create_environment
 create_environment:
-	{% if cookiecutter.environment_manager == 'conda' -%}
-	{% if cookiecutter.dependency_file != 'environment.yml' %}
-	conda create --name $(PROJECT_NAME) python=$(PYTHON_VERSION) -y
-	{% else -%}
 	conda env create --name $(PROJECT_NAME) -f environment.yml
-	{% endif %}
 	@echo ">>> conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
-	{% elif cookiecutter.environment_manager == 'virtualenv' -%}
-	@bash -c "if [ ! -z `which virtualenvwrapper.sh` ]; then source `which virtualenvwrapper.sh`; mkvirtualenv $(PROJECT_NAME) --python=$(PYTHON_INTERPRETER); else mkvirtualenv.bat $(PROJECT_NAME) --python=$(PYTHON_INTERPRETER); fi"
-	@echo ">>> New virtualenv created. Activate with:\nworkon $(PROJECT_NAME)"
-	{% elif cookiecutter.environment_manager == 'pipenv' -%}
-	pipenv --python $(PYTHON_VERSION)
-	@echo ">>> New pipenv created. Activate with:\npipenv shell"
-	{% endif %}
-{% endif %}
 
+## Remove python environment
+.PHONY: delete_environment
+delete_environment:
+	conda env remove -n $(PROJECT_NAME)
+
+## Create & Setup Kernel from environment (create + activate first)
+create_kernel:
+	$(PYTHON_INTERPRETER) -m ipykernel install --user --name $(PROJECT_NAME) --display-name "Python $(PYTHON_VERSION) ($(PROJECT_NAME) Kernel)"
+
+## Delete Kernel
+delete_kernel:
+	jupyter kernelspec uninstall $(PROJECT_NAME)
 
 #################################################################################
 # PROJECT RULES                                                                 #
@@ -100,7 +57,7 @@ create_environment:
 ## Make Dataset
 .PHONY: data
 data: requirements
-	$(PYTHON_INTERPRETER) {{ cookiecutter.module_name }}/data/make_dataset.py
+	$(PYTHON_INTERPRETER) src/data/make_dataset.py
 
 #################################################################################
 # Self Documenting Commands                                                     #
