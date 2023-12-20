@@ -3,18 +3,18 @@ channels:
   - defaults
 dependencies:
   - python={{ cookiecutter.python_version_number }}
-  - pip
-  - numpy
-  - pandas
-  - matplotlib
+  - pip>=23.2.1
+  - setuptools>=68.0.0  # technical
+  - wheel>=0.41.2       # technical
+  - numpy>=1.24.3
+  - pandas>=2.0.2
+  - matplotlib>=3.7.2   # viz
+  - scikit-learn>=1.3.0 # models
+  - notebook>=6.5.4     # jupyter
+  - ipykernel>=6.25.0   # jupyter
+  - ipython>=8.15.0     # interactive notebooks
+  - jupyter>=1.0.0      # jupyter
+  - pre-commit>=3.4.0   # for git
+  - flake8>=6.0.0       # linting
   - pip:
-    - scikit-learn
-    - notebook
-    - flake8
-    - ipython
-    - ipykernel
-    - jupyter
-    - pre-commit
-    - nbstripout
-    - setuptools
-    - wheel
+    - nbstripout>=0.6.1   # for git

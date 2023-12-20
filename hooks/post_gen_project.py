@@ -39,3 +39,4 @@ if "{{ cookiecutter.open_source_license }}" == "No license file":
     Path("LICENSE").unlink()
 
 run(['make', 'clean'])
+

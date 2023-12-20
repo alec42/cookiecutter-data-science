@@ -11,34 +11,36 @@ PYTHON_INTERPRETER = python
 # COMMANDS                                                                      #
 #################################################################################
 
-## Install Python Dependencies
 .PHONY: requirements
+## Install Python Dependencies
 requirements:
 	conda env update --name $(PROJECT_NAME) --file environment.yml --prune
 # $(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
 # $(PYTHON_INTERPRETER) -m pip install -r requirements.txt
 
 
-## Delete all compiled Python files
 .PHONY: clean
+## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
+	touch path.txt
+	echo $(PROJECT_DIR) >> path.txt
 
-## Lint using flake8 and black (use `make format` to do formatting)
 .PHONY: lint
+## Lint using flake8 and black (use `make format` to do formatting)
 lint:
 	flake8 src
 
 
-## Set up python interpreter environment
 .PHONY: create_environment
+## Set up python interpreter environment
 create_environment:
 	conda env create --name $(PROJECT_NAME) -f environment.yml
 	@echo ">>> conda env created. Activate with:\nconda activate $(PROJECT_NAME)"
 
-## Remove python environment
 .PHONY: delete_environment
+## Remove python environment
 delete_environment:
 	conda env remove -n $(PROJECT_NAME)
 
@@ -54,8 +56,8 @@ delete_kernel:
 # PROJECT RULES                                                                 #
 #################################################################################
 
-## Make Dataset
 .PHONY: data
+## Make Dataset
 data: requirements
 	$(PYTHON_INTERPRETER) src/data/make_dataset.py
 
